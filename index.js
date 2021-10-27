@@ -1,49 +1,64 @@
-const billAmount = document.querySelector("#bill-amount");
-const cashGiven = document.querySelector("#cash-given");
-const checkButton = document.querySelector("#check-button");
-const message = document.querySelector("#error-message");
-const noOfNotes = document.querySelectorAll(".no-of-notes");
+let billAmount=document.querySelector('#bill-amount');
+let cashGiven=document.querySelector('#cash-given');
+let checkButton=document.querySelector('#btn-check');
 
-const availableNotes = [2000, 500, 100, 20, 10, 5, 1];
+let noOfNotesRow=document.querySelectorAll('.no-of-notes')
+let message=document.getElementById('message');
 
-checkButton.addEventListener("click", function validateBillAndCashAmount() {
-  hideMessage();
-  if (billAmount.value > 0) {
-    // 12
-    if (cashGiven.value >= billAmount.value) {
-      // 2022> 12 => true
-      const amountToBeReturned = cashGiven.value - billAmount.value; // 2022 - 12 = 2010
-      calculateChange(amountToBeReturned);
-    } else {
-      showMessage("less amount");
+
+checkButton.addEventListener("click",showMessage);
+
+let notesAvailable=[2000,500,100,20,10,5,1]
+
+
+function calculateChange(cash,bill)
+{
+    let cashToBeReturned=cash-bill;
+ 
+    let noOfNotes=[];
+    for(let i=0;i<notesAvailable.length;i++)
+    {
+        noOfNotes[i]=Math.trunc(cashToBeReturned/notesAvailable[i]);
+       
+        cashToBeReturned=cashToBeReturned%notesAvailable[i];
     }
-  } else {
-    showMessage("Invalid Bill Amount");
-  }
-});
 
-function calculateChange(amountToBeReturned) {
-  // 2010
-  // go over all the available
-  for (let i = 0; i < availableNotes.length; i++) {
-    // no of notes need for the denomination
-    const numberOfNotes = Math.trunc(amountToBeReturned / availableNotes[i]);
-    // 2010 / 2000 = 1 || 10 / 500 = 0
-
-    // amount left after calculating the number of notes needed
-    amountToBeReturned = amountToBeReturned % availableNotes[i];
-    // 2010 % 2000 = 10 || 10 % 500 = 10
-
-    // updating the no of notes in the table for the current amount
-    noOfNotes[i].innerText = numberOfNotes;
-  }
+    return noOfNotes;
 }
 
-function hideMessage() {
-  message.style.display = "none";
+function showMessage()
+{
+    let bill=parseInt(billAmount.value);
+    let cash=parseInt(cashGiven.value);
+    if(cash>bill)
+    {
+       let noOfnotes=calculateChange(cash,bill)
+    
+       displayNoOfNotes(noOfnotes);
+       message.style.display="none";
+       
+    }
+    else if(cash==bill)
+    {
+        message.innerText="Cash given is equal to bill.No value to be returned!"
+        message.style.backgroundColor="aqua";
+    }
+
+    else
+    {
+        message.style.backgroundColor="orange";
+        message.innerText="Please give valid cash amount"
+    }
+   
 }
 
-function showMessage(msg) {
-  message.style.display = "block";
-  message.innerText = msg;
+function displayNoOfNotes(noOfNotes)
+{
+    for(let i=0;i<noOfNotes.length;i++)
+    {
+        noOfNotesRow[i].innerText=noOfNotes[i];
+        noOfNotesRow[i].style.backgroundColor="aqua"
+    }
+    
+    
 }
